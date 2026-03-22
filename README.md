@@ -29,7 +29,7 @@ dotfiles/
 Both Linux and macOS use a two-line prompt:
 
 ```
-anthonyklein @ hostname  ~/projects/myrepo  (main)
+user @ hostname  ~/projects/myrepo  (main)
 »
 ```
 
