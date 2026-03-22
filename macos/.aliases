@@ -1,0 +1,280 @@
+# =============================================================================
+# ~/.aliases — macOS
+# Requires: GNU coreutils (brew install coreutils) for ls --color, gls, etc.
+# =============================================================================
+
+# =============================================================================
+# directory & file listing
+# GNU coreutils gls used for consistent --color=auto behavior
+# =============================================================================
+
+if command -v gls &>/dev/null; then
+  alias ls='gls --color=auto'
+else
+  alias ls='ls -G'              # fallback: macOS built-in color flag
+fi
+alias la='ls -A'
+alias lf='ls -FA'
+alias ll='ls -lAh'
+alias lt='ls -altrh'
+alias l='ls -CF'
+alias lsd='ls -d */'
+alias lsize='ls -lAhS'
+
+# =============================================================================
+# file operations
+# =============================================================================
+
+alias rm='rm -iv'
+alias mv='mv -v'
+alias cp='cp -v'
+alias mkdir='mkdir -pv'
+alias ln='ln -v'
+alias trash='mv -t ~/.Trash'        # macOS trash location
+
+# =============================================================================
+# search & grep
+# =============================================================================
+
+alias grep='grep --color=auto'
+alias egrep='grep -E --color=auto'
+alias fgrep='grep -F --color=auto'
+alias diff='colordiff'              # brew install colordiff
+alias ff='find . -type f -name'
+alias fd='find . -type d -name'
+alias fhere='find . -name'
+
+# =============================================================================
+# navigation
+# =============================================================================
+
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ~='cd ~'
+alias -- -='cd -'
+
+cd_and_ls() { cd "$@" && ll; }
+alias cdl='cd_and_ls'
+
+# =============================================================================
+# project dirs (macOS paths)
+# =============================================================================
+
+alias gogit='cd ~/Projects/git'
+alias gotea='cd ~/Projects/git/gitea'
+alias goansible='cd ~/Projects/git/gitea/ansible'
+
+# =============================================================================
+# system monitoring & info
+# =============================================================================
+
+alias free='vm_stat | awk "/Pages free/ {print \$3*4096/1024/1024 \" MB free\"}"'
+alias df='df -h'
+alias du='du -sh'
+alias du1='du -h -d 1'
+alias duh='du -sh * | sort -rh'
+alias top5mem='ps -eo pmem,pcpu,pid,comm --sort=-pmem | head -n 6'
+alias top5cpu='ps -eo pcpu,pmem,pid,comm --sort=-pcpu | head -n 6'
+alias psmem='ps aux --sort=-%mem | head -20'
+alias pscpu='ps aux --sort=-%cpu | head -20'
+alias ports='lsof -iTCP -sTCP:LISTEN -n -P'
+alias myip='curl -4 ifconfig.me'
+alias myip6='curl -6 ifconfig.me'
+alias localip='ipconfig getifaddr en0'
+alias ipa='ifconfig'
+alias cpuinfo='sysctl -n machdep.cpu.brand_string'
+alias meminfo='sysctl hw.memsize'
+alias diskinfo='diskutil list'
+alias osinfo='sw_vers'
+alias kernelver='uname -r'
+alias uptime='uptime'
+
+# =============================================================================
+# macOS-specific utilities
+# =============================================================================
+
+alias o='open'                           # open file/dir in Finder
+alias o.='open .'                        # open current dir in Finder
+alias preview='open -a Preview'          # open file in Preview
+alias finder='open -a Finder'
+alias chrome='open -a "Google Chrome"'
+alias safari='open -a Safari'
+
+alias pbp='pbpaste'                      # paste from clipboard
+alias pbc='pbcopy'                       # copy to clipboard
+# pipe output to clipboard: ls | pbc
+# paste clipboard to file: pbp > file.txt
+
+alias flushdns='sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder'
+alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES && killall Finder'
+alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO && killall Finder'
+alias cleanup='find . -type f -name ".DS_Store" -delete'   # remove .DS_Store recursively
+
+# spotlight
+alias spot='mdfind'                      # spotlight search from terminal
+alias spotoff='sudo mdutil -a -i off'   # disable spotlight indexing
+alias spoton='sudo mdutil -a -i on'
+
+# quicklook from terminal
+alias ql='qlmanage -p 2>/dev/null'
+
+# lock screen
+alias lock='/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend'
+
+# sleep
+alias slp='pmset sleepnow'
+
+# =============================================================================
+# homebrew
+# =============================================================================
+
+alias brewup='brew update && brew upgrade && brew cleanup'
+alias brewinfo='brew info'
+alias brewsearch='brew search'
+alias brewlist='brew list'
+alias brewdoctor='brew doctor'
+alias caski='brew install --cask'
+alias caskls='brew list --cask'
+
+# =============================================================================
+# editors & quick tools
+# =============================================================================
+
+alias v='vim'
+alias vi='vim'
+alias n='nano -w'
+alias c='clear'
+alias h='history'
+alias hg='history | grep'
+alias tailf='tail -f'
+alias tf='tail -f'
+alias path='echo $PATH | tr ":" "\n"'
+alias envs='env | sort'
+alias reload='source ~/.bashrc'
+alias aliases='cat ~/.aliases'
+alias gitdebug='ssh -vvv gitea@<your_insance>'
+
+# =============================================================================
+# tmux
+# =============================================================================
+
+alias ta='tmux attach'
+alias tls='tmux list-sessions'
+alias tn='tmux new-session -s'
+alias tk='tmux kill-session -t'
+alias tka='tmux kill-server'
+
+# =============================================================================
+# docker & compose
+# (Docker Desktop on macOS — no sudo needed)
+# =============================================================================
+
+alias dc='docker compose'
+alias dcu='docker compose up -d'
+alias dcd='docker compose down'
+alias dcr='docker compose restart'
+alias dcl='docker compose logs -f'
+alias dcp='docker compose pull'
+alias dps='docker ps'
+alias dpsa='docker ps -a'
+alias dimg='docker images'
+alias dprune='docker system prune -f'
+alias dprunea='docker system prune -af --volumes'
+alias dstats='docker stats --no-stream'
+alias dstatsl='docker stats'
+
+dexec() { docker exec -it "$1" bash 2>/dev/null || docker exec -it "$1" sh; }
+dlogs() { docker logs -f --tail=100 "$@"; }
+
+# =============================================================================
+# git
+# =============================================================================
+
+alias git='hub'
+alias giturl='git config --get remote.origin.url'
+alias gpall='find . -mindepth 1 -maxdepth 1 -type d -exec sh -c "cd \"{}\"; git pull || echo \"Failed in {}\"" \;'
+
+alias gs='git status -sb'
+alias gss='git status'
+alias gwip='git status --porcelain'
+alias gd='git diff'
+alias gds='git diff --staged'
+alias gdw='git diff --word-diff'
+alias gitlog='git log --oneline --decorate --graph --all'
+alias gl='git log --oneline -20'
+alias gla='git log --oneline --all --graph --decorate'
+alias ga='git add'
+alias gaa='git add -A'
+alias gap='git add -p'
+alias gau='git add -u'
+alias grst='git restore --staged'
+alias gc='git commit -m'
+alias gca='git commit --amend --no-edit'
+alias gcam='git commit --amend'
+alias gcv='git commit -v'
+alias gnuke='git reset --hard HEAD && git clean -fd'
+alias gb='git branch'
+alias gba='git branch -a'
+alias gbd='git branch -d'
+alias gbD='git branch -D'
+alias gco='git checkout'
+alias gcob='git checkout -b'
+alias gsw='git switch'
+alias gswc='git switch -c'
+alias gf='git fetch --all --prune'
+alias gp='git push'
+alias gpf='git push --force-with-lease'
+alias gpl='git pull'
+alias gplr='git pull --rebase'
+alias gpsu='git push -u origin HEAD'
+alias grb='git rebase'
+alias grbi='git rebase -i'
+alias gst='git stash'
+alias gstp='git stash pop'
+alias gstl='git stash list'
+alias gcp='git cherry-pick'
+alias gtag='git tag'
+
+# =============================================================================
+# ssh
+# =============================================================================
+
+alias ssh-copy='ssh-copy-id'
+alias sshagent='eval "$(ssh-agent -s)" && ssh-add --apple-use-keychain ~/.ssh/id_ed25519'
+
+# =============================================================================
+# weather (wttr.in)
+# =============================================================================
+
+alias weather='curl -4 "wttr.in/Las+Vegas?m&format=3"'
+alias wz='curl -4 "wttr.in/Las+Vegas?m"'
+alias wzsf='curl -4 "wttr.in/San+Francisco?m"'
+
+# =============================================================================
+# misc / utilities
+# =============================================================================
+
+alias week='date +%V'
+alias now='date +"%Y-%m-%d %H:%M:%S"'
+alias timestamp='date +%Y%m%d_%H%M%S'
+alias epoch='date +%s'
+alias genpass='openssl rand -base64 32'
+alias genhex='openssl rand -hex 32'
+alias genuuid='uuidgen | tr "[:upper:]" "[:lower:]"'
+alias pingg='ping 8.8.8.8'
+alias dnscheck='dig +short'
+alias dnsall='dig +noall +answer'
+alias flushdns='sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder'
+alias countfiles='find . -type f | wc -l'
+alias bigfiles='find . -type f -size +100M -exec ls -lh {} \;'
+alias wget='wget -c'
+alias curl='curl -L'
+
+# =============================================================================
+# fun / legacy / bbs
+# =============================================================================
+
+alias mud='telnet strangemud.net 9332'
+alias dmine='telnet bbs.dmine.net'

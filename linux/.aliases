@@ -1,0 +1,286 @@
+# =============================================================================
+# ~/.aliases — Linux (Debian / Ubuntu)
+# Raspberry Pi OS, Ubuntu 22.04/24.04, Debian 12
+# =============================================================================
+
+# =============================================================================
+# directory & file listing
+# =============================================================================
+
+alias ls='ls --color=auto'
+alias la='ls -A'
+alias lf='ls -FA'
+alias ll='ls -lAh'
+alias lt='ls -altrh'
+alias l='ls -CF'
+alias lsd='ls -d */'
+alias lsize='ls -lAhS'
+
+# =============================================================================
+# file operations
+# =============================================================================
+
+alias rm='rm -iv'
+alias mv='mv -v'
+alias cp='cp -v'
+alias mkdir='mkdir -pv'
+alias ln='ln -v'
+alias trash='mv -t ~/.local/share/Trash'
+
+# =============================================================================
+# search & grep
+# =============================================================================
+
+alias grep='grep --color=auto'
+alias egrep='grep -E --color=auto'
+alias fgrep='grep -F --color=auto'
+alias diff='colordiff'
+alias ff='find . -type f -name'
+alias fd='find . -type d -name'
+alias fhere='find . -name'
+
+# =============================================================================
+# navigation
+# =============================================================================
+
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ~='cd ~'
+alias -- -='cd -'
+
+cd_and_ls() { cd "$@" && ll; }
+alias cdl='cd_and_ls'
+
+# =============================================================================
+# system monitoring & info
+# =============================================================================
+
+alias free='free -mh'
+alias df='df -Th'
+alias du='du -sh'
+alias du1='du -h --max-depth=1'
+alias duh='du -sh * | sort -rh'
+alias top5mem='ps -eo pmem,pcpu,vsize,pid,cmd --sort=-pmem | head -n 6'
+alias top5cpu='ps -eo pcpu,pmem,pid,cmd --sort=-pcpu | head -n 6'
+alias psmem='ps aux --sort=-%mem | head -20'
+alias pscpu='ps aux --sort=-%cpu | head -20'
+alias ports='ss -tlnp'
+alias ports-all='ss -tlnpu'
+alias myip='curl -4 ifconfig.me'
+alias myip6='curl -6 ifconfig.me'
+alias localip="ip -4 addr show | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | grep -v 127"
+alias ipa='ip -c a'
+alias ipr='ip -c r'
+alias cpuinfo='lscpu'
+alias meminfo='cat /proc/meminfo'
+alias diskinfo='lsblk -o NAME,SIZE,FSTYPE,MOUNTPOINT,LABEL'
+alias osinfo='cat /etc/os-release'
+alias kernelver='uname -r'
+alias uptime='uptime -p'
+
+# =============================================================================
+# editors & quick tools
+# =============================================================================
+
+alias v='vim'
+alias vi='vim'
+alias n='nano -w'
+alias c='clear'
+alias h='history'
+alias hg='history | grep'
+alias tailf='tail -f'
+alias tf='tail -f'
+alias path='echo $PATH | tr ":" "\n"'
+alias envs='env | sort'
+alias reload='source ~/.bashrc'
+alias aliases='cat ~/.aliases'
+
+# =============================================================================
+# navigation — project dirs
+# =============================================================================
+
+alias gogit='cd /home/$USER/projects/gitea'
+
+# =============================================================================
+# tmux
+# =============================================================================
+
+alias ta='tmux attach'
+alias tls='tmux list-sessions'
+alias tn='tmux new-session -s'
+alias tk='tmux kill-session -t'
+alias tka='tmux kill-server'
+
+# =============================================================================
+# package management (apt)
+# =============================================================================
+
+alias apt='sudo apt'
+alias apt-get='sudo apt-get'
+alias update='sudo apt update && sudo apt upgrade -y'
+alias upgrade='sudo apt update && sudo apt full-upgrade -y'
+alias install='sudo apt install'
+alias remove='sudo apt remove'
+alias purge='sudo apt purge'
+alias autoremove='sudo apt autoremove -y'
+alias pkgsearch='apt-cache search'
+alias pkgshow='apt-cache show'
+alias pkginstalled='dpkg -l | grep ^ii'
+
+# =============================================================================
+# systemd / services
+# =============================================================================
+
+alias sc='sudo systemctl'
+alias jc='sudo journalctl'
+alias jf='sudo journalctl -f'
+alias je='sudo journalctl -p err -b'
+alias jb='sudo journalctl -b'
+alias running="systemctl --type=service --state=running list-units --no-legend | awk '{print \$1}'"
+alias services="systemctl list-unit-files --type=service | grep '^enabled' | awk '{print \$1}'"
+alias failed='systemctl --failed'
+alias reload-daemon='sudo systemctl daemon-reload'
+
+# =============================================================================
+# docker & compose
+# (requires user in docker group: sudo usermod -aG docker $USER)
+# =============================================================================
+
+alias dc='docker compose'
+alias dcu='docker compose up -d'
+alias dcd='docker compose down'
+alias dcr='docker compose restart'
+alias dcl='docker compose logs -f'
+alias dcp='docker compose pull'
+alias dps='docker ps'
+alias dpsa='docker ps -a'
+alias dimg='docker images'
+alias dprune='docker system prune -f'
+alias dprunea='docker system prune -af --volumes'
+alias dstats='docker stats --no-stream'
+alias dstatsl='docker stats'
+
+dexec() { docker exec -it "$1" bash 2>/dev/null || docker exec -it "$1" sh; }
+dlogs() { docker logs -f --tail=100 "$@"; }
+
+# =============================================================================
+# git
+# =============================================================================
+
+alias git='hub'
+alias giturl='git config --get remote.origin.url'
+alias gpall='find . -mindepth 1 -maxdepth 1 -type d -exec sh -c "cd \"{}\"; git pull || echo \"Failed in {}\"" \;'
+
+alias gs='git status -sb'
+alias gss='git status'
+alias gwip='git status --porcelain'
+alias gd='git diff'
+alias gds='git diff --staged'
+alias gdw='git diff --word-diff'
+alias gitlog='git log --oneline --decorate --graph --all'
+alias gl='git log --oneline -20'
+alias gla='git log --oneline --all --graph --decorate'
+alias ga='git add'
+alias gaa='git add -A'
+alias gap='git add -p'
+alias gau='git add -u'
+alias grst='git restore --staged'
+alias gc='git commit -m'
+alias gca='git commit --amend --no-edit'
+alias gcam='git commit --amend'
+alias gcv='git commit -v'
+alias gnuke='git reset --hard HEAD && git clean -fd'
+alias gb='git branch'
+alias gba='git branch -a'
+alias gbd='git branch -d'
+alias gbD='git branch -D'
+alias gco='git checkout'
+alias gcob='git checkout -b'
+alias gsw='git switch'
+alias gswc='git switch -c'
+alias gf='git fetch --all --prune'
+alias gp='git push'
+alias gpf='git push --force-with-lease'
+alias gpl='git pull'
+alias gplr='git pull --rebase'
+alias gpsu='git push -u origin HEAD'
+alias grb='git rebase'
+alias grbi='git rebase -i'
+alias gst='git stash'
+alias gstp='git stash pop'
+alias gstl='git stash list'
+alias gcp='git cherry-pick'
+alias gtag='git tag'
+
+# =============================================================================
+# wireguard vpn
+# =============================================================================
+
+alias wgshow='sudo wg show'
+alias wgup='sudo wg-quick up wg0'
+alias wgdown='sudo wg-quick down wg0'
+alias wgrestart='sudo wg-quick down wg0 && sudo wg-quick up wg0'
+alias wgenable='sudo systemctl enable --now wg-quick@wg0'
+alias wgdisable='sudo systemctl disable --now wg-quick@wg0'
+alias wgstatus='sudo systemctl status wg-quick@wg0'
+alias wgpinggw='ping 10.69.0.1'
+alias wgmyip='curl -4 ifconfig.me'
+alias wgmyip6='curl -6 ifconfig.me'
+
+# =============================================================================
+# ssh
+# =============================================================================
+
+alias ssh-copy='ssh-copy-id'
+alias sshagent='eval "$(ssh-agent -s)" && ssh-add ~/.ssh/id_ed25519'
+
+# =============================================================================
+# colored output wrappers (grc — install: sudo apt install grc)
+# =============================================================================
+
+if command -v grc &>/dev/null; then
+  alias cl='/usr/bin/grc -es'
+  alias tail='cl tail'
+  alias cat='cl cat'
+  alias ping='cl ping'
+  alias netstat='cl netstat'
+  alias lsof='cl lsof -w'
+  alias gcc='cl gcc'
+  alias g++='cl g++'
+fi
+
+# =============================================================================
+# weather (wttr.in)
+# =============================================================================
+
+alias weather='curl -4 "wttr.in/Las+Vegas?m&format=3"'
+alias wz='curl -4 "wttr.in/Las+Vegas?m"'
+alias wzsf='curl -4 "wttr.in/San+Francisco?m"'
+
+# =============================================================================
+# misc / utilities
+# =============================================================================
+
+alias week='date +%V'
+alias now='date +"%Y-%m-%d %H:%M:%S"'
+alias timestamp='date +%Y%m%d_%H%M%S'
+alias epoch='date +%s'
+alias genpass='openssl rand -base64 32'
+alias genhex='openssl rand -hex 32'
+alias genuuid='cat /proc/sys/kernel/random/uuid'
+alias pingg='ping 8.8.8.8'
+alias dnscheck='dig +short'
+alias dnsall='dig +noall +answer'
+alias countfiles='find . -type f | wc -l'
+alias bigfiles='find . -type f -size +100M -exec ls -lh {} \;'
+alias wget='wget -c'
+alias curl='curl -L'
+
+# =============================================================================
+# fun / legacy / bbs
+# =============================================================================
+
+alias mud='telnet strangemud.net 9332'
+alias dmine='telnet bbs.dmine.net'

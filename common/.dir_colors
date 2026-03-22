@@ -1,0 +1,221 @@
+# =============================================================================
+# ~/.dir_colors — colors for ls output
+# Works with: ls --color=auto (Linux) and gls --color=auto (macOS via coreutils)
+# Apply: eval "$(dircolors ~/.dir_colors)" in .bashrc
+#
+# Attribute codes:
+#   00=none  01=bold  04=underscore  05=blink  07=reverse  08=concealed
+# Text color codes:
+#   30=black  31=red  32=green  33=yellow  34=blue  35=magenta  36=cyan  37=white
+# Background color codes:
+#   40=black  41=red  42=green  43=yellow  44=blue  45=magenta  46=cyan  47=white
+# =============================================================================
+
+COLOR tty
+
+OPTIONS -F -b -T 0
+
+# terminal types
+TERM linux
+TERM console
+TERM con132x25
+TERM con132x30
+TERM con132x43
+TERM con132x60
+TERM con80x25
+TERM con80x28
+TERM con80x30
+TERM con80x43
+TERM con80x50
+TERM con80x60
+TERM xterm
+TERM xterm-256color
+TERM xterm-color
+TERM screen
+TERM screen-256color
+TERM tmux
+TERM tmux-256color
+TERM rxvt
+TERM rxvt-unicode
+TERM rxvt-unicode-256color
+TERM vt100
+
+EIGHTBIT 1
+
+# =============================================================================
+# file types
+# =============================================================================
+
+NORMAL  00                  # default
+FILE    00                  # regular file
+DIR     01;34               # directory — bold blue
+LINK    01;36               # symbolic link — bold cyan
+FIFO    40;33               # named pipe — yellow on black
+SOCK    01;35               # socket — bold magenta
+BLK     40;33;01            # block device — bold yellow on black
+CHR     40;33;01            # character device — bold yellow on black
+ORPHAN  01;31               # broken symlink — bold red
+MISSING 01;31               # missing file pointed to by symlink
+EXEC    01;32               # executable — bold green
+
+# =============================================================================
+# archives & compressed
+# =============================================================================
+
+.tar    01;31
+.tgz    01;31
+.tbz2   01;31
+.txz    01;31
+.arj    01;31
+.taz    01;31
+.lzh    01;31
+.lzma   01;31
+.zip    01;31
+.z      01;31
+.Z      01;31
+.gz     01;31
+.bz2    01;31
+.xz     01;31
+.zst    01;31
+.7z     01;31
+.rar    01;31
+.deb    01;31
+.rpm    01;31
+.dmg    01;31
+.iso    01;31
+.img    01;31
+
+# =============================================================================
+# executables & scripts
+# =============================================================================
+
+.cmd    01;32
+.exe    01;32
+.com    01;32
+.bat    01;32
+.btm    01;32
+.sh     01;32
+.bash   01;32
+.zsh    01;32
+.fish   01;32
+.py     01;32
+.pl     01;32
+.rb     01;32
+
+# =============================================================================
+# source code
+# =============================================================================
+
+.c      00;32
+.cc     00;32
+.cpp    00;32
+.h      00;32
+.hpp    00;32
+.go     00;32
+.rs     00;32
+.java   00;32
+.js     00;33
+.ts     00;33
+.jsx    00;33
+.tsx    00;33
+.json   00;33
+.yaml   00;33
+.yml    00;33
+.toml   00;33
+.lua    00;33
+.vim    00;33
+.tf     00;33               # terraform
+.hcl    00;33
+
+# =============================================================================
+# documents & text
+# =============================================================================
+
+.md     00;37
+.txt    00;37
+.rst    00;37
+.log    00;37
+.csv    00;37
+.xml    00;37
+.html   00;37
+.htm    00;37
+.css    00;37
+.pdf    01;37
+.doc    01;37
+.docx   01;37
+.xls    01;37
+.xlsx   01;37
+
+# =============================================================================
+# images
+# =============================================================================
+
+.jpg    00;36
+.jpeg   00;36
+.png    00;36
+.gif    00;36
+.bmp    00;36
+.tif    00;36
+.tiff   00;36
+.xpm    00;36
+.xbm    00;36
+.tga    00;36
+.ppm    00;36
+.pcx    00;36
+.xcf    00;36
+.svg    00;36
+.ico    00;36
+.webp   00;36
+.heic   00;36
+.raw    00;36
+
+# =============================================================================
+# audio
+# =============================================================================
+
+.mp3    00;32
+.flac   00;32
+.wav    00;32
+.aac    00;32
+.ogg    00;32
+.m4a    00;32
+.mid    00;32
+.midi   00;32
+.au     00;32
+
+# =============================================================================
+# video
+# =============================================================================
+
+.mp4    00;35
+.mkv    00;35
+.avi    00;35
+.mov    00;35
+.mpg    00;35
+.mpeg   00;35
+.wmv    00;35
+.flv    00;35
+.webm   00;35
+.m4v    00;35
+.fli    00;35
+.flc    00;35
+
+# =============================================================================
+# dotfiles & config (subtle highlight)
+# =============================================================================
+
+.env            00;33
+.conf           00;33
+.config         00;33
+.ini            00;33
+.cfg            00;33
+.lock           00;90       # dim — lockfiles are noise
+
+# =============================================================================
+# retro / emulator (original entries kept)
+# =============================================================================
+
+.nes    00;31
+.smc    00;31
+.sfc    00;31
+.fig    00;31

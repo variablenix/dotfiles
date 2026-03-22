@@ -1,0 +1,155 @@
+# =============================================================================
+# ~/.gitconfig — global git configuration
+# Personal values (name, email, signingkey) are intentionally left blank.
+# Fill in the [user] section before use.
+# =============================================================================
+
+[user]
+	name  = Your Name
+	email = you@example.com
+	# signingkey = YOUR_GPG_KEY_ID   # uncomment if using GPG commit signing
+
+[core]
+	editor      = vim
+	autocrlf    = input              # convert CRLF→LF on commit (Linux/macOS)
+	whitespace  = fix                # fix trailing whitespace and spaces before tabs
+	excludesfile = ~/.gitignore_global
+	pager       = less -FX           # don't page short output, don't clear screen
+
+[init]
+	defaultBranch = main
+
+[pull]
+	rebase = false                   # merge by default on pull (change to true for rebase)
+
+[push]
+	default       = current          # push current branch to same-named remote branch
+	autoSetupRemote = true           # auto set upstream on first push
+
+[fetch]
+	prune = true                     # auto-remove stale remote-tracking refs on fetch
+
+[merge]
+	tool = vimdiff
+	conflictstyle = diff3            # show base in conflict markers (easier to resolve)
+
+[diff]
+	tool       = vimdiff
+	colorMoved = default             # color moved lines differently from changed lines
+
+[rebase]
+	autoStash = true                 # auto stash/unstash around rebase
+
+[status]
+	showUntrackedFiles = all         # show individual untracked files (not just dirs)
+
+[log]
+	date = relative                  # show relative dates (e.g. "3 days ago")
+	abbrevCommit = true              # shorten commit hashes in log
+
+[help]
+	autocorrect = 20                 # auto-correct mistyped commands after 2 seconds
+
+[color]
+	ui = auto
+
+[color "branch"]
+	current  = yellow bold
+	local    = green
+	remote   = red
+
+[color "diff"]
+	meta     = yellow bold
+	frag     = magenta bold
+	old      = red bold
+	new      = green bold
+	whitespace = red reverse
+
+[color "status"]
+	added     = green bold
+	changed   = yellow bold
+	untracked = red
+
+# =============================================================================
+# aliases — supplement shell aliases for git-native use
+# (these work even without hub or shell alias setup)
+# =============================================================================
+
+[alias]
+	# log
+	lg    = log --oneline --decorate --graph --all
+	ll    = log --oneline -20
+	last  = log -1 HEAD --stat
+	who   = shortlog -sn --all
+
+	# status & diff
+	st    = status -sb
+	wip   = status --porcelain
+	d     = diff
+	ds    = diff --staged
+	dw    = diff --word-diff
+
+	# staging & committing
+	aa    = add -A
+	ap    = add -p
+	cm    = commit -m
+	ca    = commit --amend --no-edit
+	cam   = commit --amend
+	nuke  = "!git reset --hard HEAD && git clean -fd"
+
+	# branches
+	br    = branch -vv
+	bra   = branch -a
+	sw    = switch
+	co    = checkout
+	cob   = checkout -b
+
+	# remote
+	f     = fetch --all --prune
+	psu   = push -u origin HEAD
+	fpush = push --force-with-lease
+
+	# stash
+	sl    = stash list
+	sp    = stash pop
+	ss    = stash push -m
+
+	# utility
+	aliases = config --get-regexp alias       # list all git aliases
+	url     = config --get remote.origin.url  # show remote URL
+	root    = rev-parse --show-toplevel       # show repo root dir
+	ignore  = "!gi() { curl -sL https://www.gitignore.io/api/$@ ;}; gi"  # generate .gitignore
+
+	# find commits by message
+	find    = "!git log --all --oneline --grep"
+
+	# undo last commit, keep changes staged
+	undo    = reset --soft HEAD~1
+
+	# show files changed in last commit
+	changed = diff-tree --no-commit-id -r --name-only HEAD
+
+	# clean merged branches (safe — skips main/master/develop)
+	cleanbr = "!git branch --merged main | grep -v '^\\*\\|main\\|master\\|develop' | xargs git branch -d"
+
+# =============================================================================
+# platform-specific includes
+# Uncomment and create these files to apply machine-specific overrides
+# without touching the main config (e.g. different email per machine)
+# =============================================================================
+
+# [includeIf "gitdir:~/work/"]
+# 	path = ~/.gitconfig-work         # separate identity for work repos
+
+# [includeIf "hasconfig:remote.*.url:git@github.com:*/**"]
+# 	path = ~/.gitconfig-github
+
+# =============================================================================
+# url rewrites (optional — force SSH over HTTPS for GitHub/Gitea)
+# =============================================================================
+
+# [url "git@github.com:"]
+# 	insteadOf = https://github.com/
+
+# [url "git@git.aklein.me:"]
+# 	insteadOf = https://git.aklein.me/

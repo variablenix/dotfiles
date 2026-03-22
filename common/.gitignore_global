@@ -1,0 +1,128 @@
+# =============================================================================
+# ~/.gitignore_global — global git ignore rules
+# Apply with: git config --global core.excludesfile ~/.gitignore_global
+# Covers: macOS, Linux, editors, secrets, and common tooling artifacts
+# =============================================================================
+
+# =============================================================================
+# secrets & credentials — never commit these
+# =============================================================================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+secrets/
+secrets.yml
+secrets.yaml
+secrets.json
+*_secrets.*
+*token*
+*password*
+*passwd*
+credentials
+credentials.json
+kubeconfig
+*.kubeconfig
+.vault_pass
+vault-token
+
+# =============================================================================
+# macOS
+# =============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+.AppleDB
+.AppleDesktop
+Icon?
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# =============================================================================
+# linux
+# =============================================================================
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# =============================================================================
+# editors
+# =============================================================================
+
+# vim / neovim
+*.swp
+*.swo
+*.swn
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+Session.vim
+.netrwhist
+tags
+[._]*.un~
+
+# vscode
+.vscode/
+!.vscode/extensions.json
+.history/
+
+# jetbrains
+.idea/
+*.iml
+*.iws
+
+# sublime text
+*.sublime-workspace
+
+# emacs
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+.\#*
+
+# =============================================================================
+# logs & temp files
+# =============================================================================
+*.log
+*.tmp
+*.temp
+*.cache
+
+# =============================================================================
+# compiled / binary output
+# =============================================================================
+*.o
+*.so
+*.dylib
+*.class
+*.exe
+*.out
+*.pyc
+__pycache__/
+
+# =============================================================================
+# archives
+# =============================================================================
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.tar.bz2
+*.rar
+*.7z
+*.gz
+*.iso
+*.dmg

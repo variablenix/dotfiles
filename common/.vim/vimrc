@@ -1,0 +1,243 @@
+" =============================================================================
+" ~/.vimrc
+" Tested on: Vim 8+, Debian 12, Ubuntu 22.04/24.04
+" =============================================================================
+
+if v:progname =~? "evim"
+  finish
+endif
+
+" =============================================================================
+" General Settings
+" =============================================================================
+
+set nocompatible               " use Vim settings, not Vi
+set encoding=utf-8
+set history=200
+set hidden                     " allow unsaved buffers in background
+set backspace=indent,eol,start " backspace over everything in insert mode
+set whichwrap+=<,>,[,]         " wrap cursor movement across lines
+
+" =============================================================================
+" UI & Display
+" =============================================================================
+
+set ruler                      " show cursor position
+set showcmd                    " display incomplete commands
+set cursorline                 " highlight current line
+set showmatch                  " highlight matching brackets
+set title                      " set terminal title
+set t_Co=256                   " 256 color support
+set scrolloff=5                " keep 5 lines visible above/below cursor
+set laststatus=2               " always show status line
+set wildmenu                   " enhanced command-line completion
+set wildmode=list:longest      " complete to longest common string
+
+" prevent alternate screen switching (prompt appears inline on exit)
+" uncomment if you prefer Vim not to clear the screen on close:
+" set t_ti=
+" set t_te=
+
+" line numbers: off by default so mouse copy is clean
+" toggle on/off with <leader>l
+set nonumber
+set norelativenumber
+nnoremap <leader>l :set number! relativenumber!<CR>
+
+" =============================================================================
+" Search
+" =============================================================================
+
+set incsearch                  " incremental search as you type
+set hlsearch                   " highlight all search results
+set ignorecase                 " case-insensitive search...
+set smartcase                  " ...unless uppercase is used
+
+" clear search highlight
+nnoremap <silent> <leader>/ :nohlsearch<CR>
+
+" =============================================================================
+" Indentation & Tabs
+" =============================================================================
+
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab                  " spaces instead of tabs
+set smarttab
+set autoindent
+
+" =============================================================================
+" Backup, Swap & Undo
+" =============================================================================
+
+" create directories if they don't exist
+silent !mkdir -p ~/.vim/backup ~/.vim/swap ~/.vim/undo ~/.vim/bundle ~/.vim/colors ~/.vim/plugin ~/.vim/plugged
+
+set backup
+set backupdir=~/.vim/backup//  " trailing // includes full path in filename
+set directory=~/.vim/swap//
+set undodir=~/.vim/undo//
+set undofile                   " persistent undo across sessions
+set undolevels=1000
+
+" =============================================================================
+" Syntax & Filetype
+" =============================================================================
+
+syntax on
+let python_highlight_all = 1
+
+if has("autocmd")
+  filetype plugin indent on
+
+  augroup vimrcEx
+    au!
+
+    " restore last cursor position when reopening a file
+    autocmd BufReadPost *
+      \ if line("'\"") > 1 && line("'\"") <= line("$") |
+      \   exe "normal! g`\"" |
+      \ endif
+
+    " text files: wrap at 78 characters
+    autocmd FileType text setlocal textwidth=78
+
+    " python: PEP8 style
+    autocmd FileType python
+      \ setlocal tabstop=4 |
+      \ setlocal shiftwidth=4 |
+      \ setlocal softtabstop=4 |
+      \ setlocal textwidth=79 |
+      \ setlocal expandtab |
+      \ setlocal autoindent |
+      \ setlocal fileformat=unix
+
+    " yaml: 2-space indent
+    autocmd FileType yaml setlocal tabstop=2 shiftwidth=2 softtabstop=2
+
+    " markdown: disable folding (long READMEs stay readable)
+    autocmd FileType markdown setlocal nofoldenable
+
+    " shell scripts: ensure unix line endings
+    autocmd FileType sh setlocal fileformat=unix
+
+  augroup END
+else
+  set autoindent
+endif
+
+" =============================================================================
+" Key Mappings
+" =============================================================================
+
+" Q formats text instead of entering Ex mode
+map Q gq
+
+" toggle paste mode (prevents autoindent cascading when pasting)
+set pastetoggle=<F9>
+
+" make Ctrl-U in insert mode undoable (break undo sequence first)
+inoremap <C-U> <C-G>u<C-U>
+
+" save with Ctrl-S (requires stty -ixon in .bashrc to disable flow control)
+nnoremap <C-s> :w<CR>
+inoremap <C-s> <Esc>:w<CR>a
+
+" move between windows with Ctrl + hjkl
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" quick buffer navigation
+nnoremap <leader>] :bnext<CR>
+nnoremap <leader>[ :bprevious<CR>
+
+" =============================================================================
+" Colorscheme
+" =============================================================================
+
+" set your preferred colorscheme here
+" built-in options: desert, elflord, torte, evening, slate
+" uncomment one or set your own after installing via vim-plug
+" colorscheme euphrasia        " custom (must be in ~/.vim/colors/)
+colorscheme desert             " safe fallback — always available
+
+" =============================================================================
+" Misc
+" =============================================================================
+
+set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc,.png,.jpg
+
+let g:vim_markdown_frontmatter=1
+
+" DiffOrig: compare buffer to saved file
+if !exists(":DiffOrig")
+  command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+    \ | wincmd p | diffthis
+endif
+
+" =============================================================================
+" Plugins (vim-plug)
+" Auto-installs vim-plug if missing on first launch
+" Run :PlugInstall after opening Vim for the first time on a new machine
+" =============================================================================
+
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin('~/.vim/plugged')
+
+  " --- colorschemes ---
+  Plug 'junegunn/seoul256.vim'
+
+  " --- file navigation ---
+  Plug 'scrooloose/nerdtree', { 'on': 'NERDTree' }   " file explorer
+  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+  Plug 'junegunn/fzf.vim'                             " fzf integration
+
+  " --- editing utilities ---
+  Plug 'junegunn/vim-easy-align'     " align text by character
+  Plug 'tpope/vim-surround'          " surround text with brackets/quotes
+  Plug 'godlygeek/tabular'           " tabular alignment
+  Plug 'tpope/vim-commentary'        " toggle comments with gcc/gc
+
+  " --- git ---
+  Plug 'tpope/vim-fugitive'          " git commands inside vim
+
+  " --- markdown / writing ---
+  Plug 'plasticboy/vim-markdown'
+  Plug 'junegunn/goyo.vim'           " distraction-free writing
+  Plug 'junegunn/limelight.vim'      " focus current paragraph
+  Plug 'reedes/vim-pencil'           " word-processor mode for prose
+
+call plug#end()
+
+" =============================================================================
+" Plugin Config
+" =============================================================================
+
+" vim-markdown: disable folding (prevents collapsed headings in long .md files)
+let g:vim_markdown_folding_disabled = 1
+
+" goyo + limelight: auto-enable limelight when goyo activates
+autocmd! User GoyoEnter Limelight
+autocmd! User GoyoLeave Limelight!
+
+" NERDTree
+nnoremap <leader>n :NERDTreeToggle<CR>
+
+" vim-easy-align: start in visual and normal mode with ga
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+
+" fzf
+nnoremap <leader>f :Files<CR>
+nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>g :Rg<CR>           " ripgrep search (requires rg)
+
+" EOF
