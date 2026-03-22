@@ -1,64 +1,134 @@
 # dotfiles
 
-Personal shell configuration files for Debian/Ubuntu servers and macOS.
-Covers aliases, Vim, and tmux — kept minimal, well-commented, and safe to deploy on any machine.
+Personal shell configuration files for Debian/Ubuntu Linux and macOS.
+Organized by platform — `common` files are identical across machines, platform
+folders contain OS-specific versions.
 
-## Files
+## Structure
 
-| File | Purpose |
-|------|---------|
-| [.aliases](.aliases) | Shell aliases — navigation, git, docker, systemd, WireGuard, and more |
-| [.vimrc](.vimrc) | Vim config — vim-plug, fzf, NERDTree, goyo, fugitive |
-| [.tmux.conf](.tmux.conf) | tmux config — Ctrl-a prefix, vim pane nav, status bar |
+```
+dotfiles/
+├── common/                  # identical across all platforms
+│   ├── .gitconfig           # git identity, aliases, behavior (fill in name/email)
+│   ├── .gitignore_global    # global git ignore — OS files, editor artifacts, secrets
+│   ├── .dir_colors          # ls color scheme (Linux: dircolors, macOS: gdircolors)
+│   ├── .vimrc               # vim config — vim-plug, fzf, NERDTree, goyo, fugitive
+│   └── .tmux.conf           # tmux — Ctrl-a prefix, vim pane nav, vi copy, status bar
+├── linux/                   # Debian, Ubuntu, Raspberry Pi OS
+│   ├── .bashrc              # bash config — prompt, completions, tool integrations
+│   └── .aliases             # aliases — apt, systemd, WireGuard, docker, git
+└── macos/                   # macOS (Apple Silicon + Intel)
+    ├── .bashrc              # bash config — homebrew, prompt, tool integrations
+    └── .aliases             # aliases — brew, open, pbcopy, Finder, docker, git
+```
+
+## Prompt
+
+Both Linux and macOS use a two-line prompt:
+
+```
+anthonyklein @ hostname  ~/projects/myrepo  (main)
+»
+```
+
+- Line 1 — username (green), `@`, hostname (cyan), path (blue), git branch (yellow), venv (white)
+- Line 2 — `»` cursor in cyan
+- Root sessions show username in red (Linux only)
+- Git branch and venv only appear when inside a repo or active virtualenv
 
 ## Install
 
-Clone and symlink to your home directory:
+### Linux
 
 ```bash
 git clone https://github.com/KDN-Cloud/dotfiles.git ~/dotfiles
 
-ln -sf ~/dotfiles/.aliases ~/.aliases
-ln -sf ~/dotfiles/.vimrc ~/.vimrc
-ln -sf ~/dotfiles/.tmux.conf ~/.tmux.conf
+# common
+ln -sf ~/dotfiles/common/.gitconfig        ~/.gitconfig
+ln -sf ~/dotfiles/common/.gitignore_global ~/.gitignore_global
+ln -sf ~/dotfiles/common/.dir_colors       ~/.dir_colors
+ln -sf ~/dotfiles/common/.vimrc            ~/.vimrc
+ln -sf ~/dotfiles/common/.tmux.conf        ~/.tmux.conf
+
+# linux-specific
+ln -sf ~/dotfiles/linux/.bashrc   ~/.bashrc
+ln -sf ~/dotfiles/linux/.aliases  ~/.aliases
+
+source ~/.bashrc
 ```
 
-Then source aliases in your shell config if not already set up:
+### macOS
 
 ```bash
-# add to ~/.bashrc or ~/.zshrc
-[ -f ~/.aliases ] && source ~/.aliases
+git clone https://github.com/KDN-Cloud/dotfiles.git ~/dotfiles
+
+# common
+ln -sf ~/dotfiles/common/.gitconfig        ~/.gitconfig
+ln -sf ~/dotfiles/common/.gitignore_global ~/.gitignore_global
+ln -sf ~/dotfiles/common/.dir_colors       ~/.dir_colors
+ln -sf ~/dotfiles/common/.vimrc            ~/.vimrc
+ln -sf ~/dotfiles/common/.tmux.conf        ~/.tmux.conf
+
+# macos-specific
+ln -sf ~/dotfiles/macos/.bashrc   ~/.bashrc
+ln -sf ~/dotfiles/macos/.aliases  ~/.aliases
+
+source ~/.bashrc
 ```
+
+Register the global gitignore (if not already in `.gitconfig`):
+
+```bash
+git config --global core.excludesfile ~/.gitignore_global
+```
+
+## Machine-specific overrides
+
+Create `~/.bashrc.local` for per-machine settings that should never be committed — it is sourced automatically at the end of `.bashrc`:
+
+```bash
+# ~/.bashrc.local — machine-specific, not in git
+export GIT_AUTHOR_EMAIL="work@company.com"
+export SOME_LOCAL_API_KEY="..."
+alias gowork='cd ~/work/client-project'
+```
+
+Same pattern for git — use `~/.gitconfig-local` via `[includeIf]` (see comments in `common/.gitconfig`).
 
 ## Dependencies
 
-### .aliases
+### Linux
 
 ```bash
-sudo apt install colordiff grc hub
+sudo apt install colordiff grc hub curl vim tmux fzf ripgrep
 ```
 
 - `colordiff` — colored diff output
-- `grc` — generic colorizer for ping, netstat, etc.
-- `hub` — GitHub CLI wrapper for git (or replace `alias git='hub'` with plain `git`)
-
-### .vimrc
-
-Plugins are managed by [vim-plug](https://github.com/junegunn/vim-plug) and auto-install on first launch. Some plugins require:
+- `grc` — colorizes ping, netstat, etc. (aliases are guarded — safe if missing)
+- `hub` — GitHub CLI git wrapper (`alias git='hub'`). Remove if not needed.
+- Docker aliases assume user is in the `docker` group — no sudo required:
 
 ```bash
-sudo apt install fzf ripgrep curl
+sudo usermod -aG docker $USER && newgrp docker
 ```
 
-### .tmux.conf
-
-Requires tmux 3.0+:
+### macOS
 
 ```bash
-sudo apt install tmux
+brew install bash coreutils colordiff hub vim tmux fzf ripgrep fd bash-completion@2
 ```
 
-Optional — [tmux plugin manager](https://github.com/tmux-plugins/tpm):
+- `bash` — macOS ships with bash 3.2; install bash 5+ for full feature support
+- `coreutils` — provides `gls` (GNU ls with `--color`) and `gdircolors` for `.dir_colors`
+- After installing bash 5: `chsh -s /opt/homebrew/bin/bash`
+
+### vim plugins
+
+vim-plug auto-installs on first launch. Run `:PlugInstall` once inside Vim if plugins don't load automatically.
+
+### tmux
+
+Requires tmux 3.0+. Optional plugin manager:
 
 ```bash
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
@@ -66,7 +136,10 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 ## Notes
 
-- `.aliases` uses `alias git='hub'` — remove or change to plain `git` if `hub` is not installed
-- `.vimrc` defaults to the `desert` colorscheme (built-in safe fallback) — swap for your preferred scheme
-- WireGuard aliases in `.aliases` assume interface `wg0` and subnet `10.69.0.0/24` — adjust to match your setup
-- Weather aliases point to Las Vegas — change `wttr.in/Las+Vegas` to your city
+- `.gitconfig` — name and email are **intentionally blank** — fill in locally or via `~/.bashrc.local`
+- `.vimrc` — defaults to `desert` colorscheme (built-in fallback) — swap to your preferred scheme
+- `.dir_colors` — Linux uses `dircolors`, macOS uses `gdircolors` (GNU coreutils). Both are handled in the respective `.bashrc`
+- WireGuard aliases (Linux only) assume interface `wg0` — adjust if your interface name differs
+- Weather aliases default to Las Vegas — change `wttr.in/Las+Vegas` to your city
+- macOS `sshagent` alias uses `--apple-use-keychain` to persist the key in the macOS keychain
+- `~/.bashrc.local` is sourced automatically if present — use it for anything machine-specific that should never be committed
