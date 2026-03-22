@@ -1,5 +1,7 @@
 # dotfiles
 
+![prompt](assets/prompt.png)
+
 Personal shell configuration files for Debian/Ubuntu Linux and macOS.
 Organized by platform — `common` files are identical across machines, platform
 folders contain OS-specific versions.
