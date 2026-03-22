@@ -145,3 +145,12 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 - Weather aliases default to Las Vegas — change `wttr.in/Las+Vegas` to your city
 - macOS `sshagent` alias uses `--apple-use-keychain` to persist the key in the macOS keychain
 - `~/.bashrc.local` is sourced automatically if present — use it for anything machine-specific that should never be committed
+
+## Related
+
+Other repos in the [KDN-Cloud](https://github.com/KDN-Cloud) org:
+
+| Repo | Description |
+|------|-------------|
+| [ops-ref](https://github.com/KDN-Cloud/ops-ref) | Quick-reference sheets for git, vim, bash, docker, and beyond |
+| [pi-backups-recovery](https://github.com/KDN-Cloud/pi-backups-recovery) | Bare-metal backup and recovery for Raspberry Pi using raspiBackup |
