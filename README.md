@@ -136,6 +136,44 @@ Requires tmux 3.0+. Optional plugin manager:
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ```
 
+## Ansible Deployment (Optional)
+
+For automated deployment across multiple hosts, this repo can be consumed by an Ansible role instead of running the symlink commands manually.
+
+This is useful when provisioning new VMs or homelab nodes where you want dotfiles applied consistently without manual steps.
+
+### Example task
+```yaml
+- name: Clone dotfiles
+  git:
+    repo: https://github.com/variablenix/dotfiles.git
+    dest: "{{ ansible_env.HOME }}/dotfiles"
+    version: main
+
+- name: Deploy common dotfiles
+  file:
+    src: "{{ ansible_env.HOME }}/dotfiles/common/{{ item }}"
+    dest: "{{ ansible_env.HOME }}/{{ item }}"
+    state: link
+  loop:
+    - .gitconfig
+    - .gitignore_global
+    - .dir_colors
+    - .vimrc
+    - .tmux.conf
+
+- name: Deploy platform dotfiles
+  file:
+    src: "{{ ansible_env.HOME }}/dotfiles/{{ ansible_os_family | lower }}/{{ item }}"
+    dest: "{{ ansible_env.HOME }}/{{ item }}"
+    state: link
+  loop:
+    - .bashrc
+    - .aliases
+```
+
+> Uses `ansible_os_family` to select `linux` or `macos` automatically. Add a `vars` block or `when` condition if your family name mapping differs.
+
 ## Notes
 
 - `.gitconfig` — name and email are **intentionally blank** — fill in locally or via `~/.bashrc.local`
