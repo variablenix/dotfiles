@@ -1,23 +1,23 @@
 # =============================================================================
-# ~/.aliases — macOS
-# Requires: GNU coreutils (brew install coreutils) for ls --color, gls, etc.
+# ~/.aliases — macOS (Null-Air)
+# Apple Silicon, Homebrew, dev & infra focused
 # =============================================================================
 
 # =============================================================================
 # directory & file listing
-# GNU coreutils gls used for consistent --color=auto behavior
+# GNU coreutils gls used for --color=auto consistency
 # =============================================================================
 
 if command -v gls &>/dev/null; then
-  alias ls='gls --color=auto'
+    alias ls='gls --color=auto'
 else
-  alias ls='ls -G'              # fallback: macOS built-in color flag
+    alias ls='ls -G'                 # fallback: macOS built-in color flag
 fi
+alias l='ls -F'
 alias la='ls -A'
+alias ll='ls -ltrh'
+alias lla='ls -ltrha'
 alias lf='ls -FA'
-alias ll='ls -lAh'
-alias lt='ls -altrh'
-alias l='ls -CF'
 alias lsd='ls -d */'
 alias lsize='ls -lAhS'
 
@@ -25,21 +25,21 @@ alias lsize='ls -lAhS'
 # file operations
 # =============================================================================
 
-alias rm='rm -iv'
-alias mv='mv -v'
 alias cp='cp -v'
+alias mv='mv -v'
+alias rm='rm -i'
 alias mkdir='mkdir -pv'
 alias ln='ln -v'
-alias trash='mv -t ~/.Trash'        # macOS trash location
+alias trash='mv -t ~/.Trash'
 
 # =============================================================================
-# search & grep
+# search & diff
 # =============================================================================
 
 alias grep='grep --color=auto'
 alias egrep='grep -E --color=auto'
 alias fgrep='grep -F --color=auto'
-alias diff='colordiff'              # brew install colordiff
+alias diff='colordiff'
 alias ff='find . -type f -name'
 alias fd='find . -type d -name'
 alias fhere='find . -name'
@@ -54,6 +54,9 @@ alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias ~='cd ~'
 alias -- -='cd -'
+alias c='clear'
+alias h='history'
+alias hg='history | grep'
 
 cd_and_ls() { cd "$@" && ll; }
 alias cdl='cd_and_ls'
@@ -64,72 +67,87 @@ alias cdl='cd_and_ls'
 
 alias gogit='cd ~/Projects/git'
 alias gotea='cd ~/Projects/git/gitea'
-alias goansible='cd ~/Projects/git/gitea/ansible'
+alias goansible='cd ~/Projects/git/gitea/kdnlab/ansible'
+alias gokeepass='cd ~/Documents/KeePass'
+alias goblog='cd ~/Projects/git/github/ORG/kdnc/'
 
 # =============================================================================
-# system monitoring & info
+# editors & shell
 # =============================================================================
 
-alias free='vm_stat | awk "/Pages free/ {print \$3*4096/1024/1024 \" MB free\"}"'
+alias v='vim'
+alias vi='vim'
+alias n='nano'
+alias tailf='tail -f'
+alias tf='tail -f'
+alias path='echo $PATH | tr ":" "\n"'
+alias envs='env | sort'
+alias reload='source ~/.bash_profile'
+alias aliases='cat ~/.aliases'
+alias bash='/opt/homebrew/bin/bash'
+alias python='/opt/homebrew/bin/python3'
+
+# =============================================================================
+# system & network
+# =============================================================================
+
+alias up='uptime'
 alias df='df -h'
 alias du='du -sh'
 alias du1='du -h -d 1'
 alias duh='du -sh * | sort -rh'
 alias top5mem='ps -eo pmem,pcpu,pid,comm --sort=-pmem | head -n 6'
 alias top5cpu='ps -eo pcpu,pmem,pid,comm --sort=-pcpu | head -n 6'
-alias psmem='ps aux --sort=-%mem | head -20'
-alias pscpu='ps aux --sort=-%cpu | head -20'
 alias ports='lsof -iTCP -sTCP:LISTEN -n -P'
 alias myip='curl -4 ifconfig.me'
 alias myip6='curl -6 ifconfig.me'
+alias getip='curl -4 ifconfig.co 2>/dev/null'
+alias getip6='curl -6 ifconfig.co 2>/dev/null'
 alias localip='ipconfig getifaddr en0'
 alias ipa='ifconfig'
-alias cpuinfo='sysctl -n machdep.cpu.brand_string'
-alias meminfo='sysctl hw.memsize'
-alias diskinfo='diskutil list'
 alias osinfo='sw_vers'
+alias diskinfo='diskutil list'
 alias kernelver='uname -r'
-alias uptime='uptime'
+alias mtr='sudo mtr'
+alias speedtest='speedtest-cli'
+alias swu='sudo softwareupdate'
+alias dnsrestart='sudo killall -HUP mDNSResponder'
+alias flushdns='sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder'
 
 # =============================================================================
-# macOS-specific utilities
+# macOS utilities
 # =============================================================================
 
-alias o='open'                           # open file/dir in Finder
-alias o.='open .'                        # open current dir in Finder
-alias preview='open -a Preview'          # open file in Preview
+alias o='open'
+alias o.='open .'
+alias preview='open -a Preview'
 alias finder='open -a Finder'
 alias chrome='open -a "Google Chrome"'
 alias safari='open -a Safari'
-
-alias pbp='pbpaste'                      # paste from clipboard
-alias pbc='pbcopy'                       # copy to clipboard
-# pipe output to clipboard: ls | pbc
-# paste clipboard to file: pbp > file.txt
-
-alias flushdns='sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder'
+alias pbp='pbpaste'
+alias pbc='pbcopy'
 alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES && killall Finder'
 alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO && killall Finder'
-alias cleanup='find . -type f -name ".DS_Store" -delete'   # remove .DS_Store recursively
-
-# spotlight
-alias spot='mdfind'                      # spotlight search from terminal
-alias spotoff='sudo mdutil -a -i off'   # disable spotlight indexing
-alias spoton='sudo mdutil -a -i on'
-
-# quicklook from terminal
+alias cleanup='find . -type f -name ".DS_Store" -delete'
+alias spot='mdfind'
 alias ql='qlmanage -p 2>/dev/null'
-
-# lock screen
 alias lock='/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend'
-
-# sleep
 alias slp='pmset sleepnow'
+
+# =============================================================================
+# cups / printing
+# =============================================================================
+
+alias cups-web='open https://cups.example.cloud'
+alias cups-status='lpstat -p -d'        # list printers + default
+alias cups-jobs='lpstat -o'             # show active print jobs
+alias printer-default='lpstat -d'       # show default printer
 
 # =============================================================================
 # homebrew
 # =============================================================================
 
+alias update='brew update && brew upgrade'
 alias brewup='brew update && brew upgrade && brew cleanup'
 alias brewinfo='brew info'
 alias brewsearch='brew search'
@@ -137,24 +155,8 @@ alias brewlist='brew list'
 alias brewdoctor='brew doctor'
 alias caski='brew install --cask'
 alias caskls='brew list --cask'
-
-# =============================================================================
-# editors & quick tools
-# =============================================================================
-
-alias v='vim'
-alias vi='vim'
-alias n='nano -w'
-alias c='clear'
-alias h='history'
-alias hg='history | grep'
-alias tailf='tail -f'
-alias tf='tail -f'
-alias path='echo $PATH | tr ":" "\n"'
-alias envs='env | sort'
-alias reload='source ~/.bashrc'
-alias aliases='cat ~/.aliases'
-alias gitdebug='ssh -vvv gitea@<your_insance>'
+# reset homebrew git repo if needed
+alias brewtreeupdate='cd /opt/homebrew && git fetch origin && git reset --hard origin/master && cd -'
 
 # =============================================================================
 # tmux
@@ -192,19 +194,36 @@ dlogs() { docker logs -f --tail=100 "$@"; }
 # git
 # =============================================================================
 
+# --- Git & Hub Wrapper ---
 alias git='hub'
 alias giturl='git config --get remote.origin.url'
-alias gpall='find . -mindepth 1 -maxdepth 1 -type d -exec sh -c "cd \"{}\"; git pull || echo \"Failed in {}\"" \;'
+alias gitdebug='ssh git@github.com'
 
+# --- Identity & Configuration ---
+alias gcl='git config --list'
+alias ggl='git config --global --list'
+alias gll='git config --local --list'
+alias gedit-global='git config --global --edit'
+alias gedit-local='git config --local --edit'
+alias gunset-local='git config --unset --local'
+
+gset-global() { git config --global user.name "$1" && git config --global user.email "$2"; echo "Global: $1 <$2>"; }
+gset-local()  { git config --local user.name "$1" && git config --local user.email "$2"; echo "Local: $1 <$2>"; }
+
+alias git-work='git config --global user.name "AK" && git config --global user.email "git@kdn.cloud"'
+
+# --- Status & Log ---
 alias gs='git status -sb'
 alias gss='git status'
 alias gwip='git status --porcelain'
 alias gd='git diff'
 alias gds='git diff --staged'
 alias gdw='git diff --word-diff'
-alias gitlog='git log --oneline --decorate --graph --all'
 alias gl='git log --oneline -20'
 alias gla='git log --oneline --all --graph --decorate'
+alias gitlog='git log --oneline --decorate --graph --all'
+
+# --- Add, Commit & Restore ---
 alias ga='git add'
 alias gaa='git add -A'
 alias gap='git add -p'
@@ -215,6 +234,8 @@ alias gca='git commit --amend --no-edit'
 alias gcam='git commit --amend'
 alias gcv='git commit -v'
 alias gnuke='git reset --hard HEAD && git clean -fd'
+
+# --- Branches & Switching ---
 alias gb='git branch'
 alias gba='git branch -a'
 alias gbd='git branch -d'
@@ -223,12 +244,20 @@ alias gco='git checkout'
 alias gcob='git checkout -b'
 alias gsw='git switch'
 alias gswc='git switch -c'
+
+# --- Fetch, Pull & Push ---
 alias gf='git fetch --all --prune'
 alias gp='git push'
 alias gpf='git push --force-with-lease'
 alias gpl='git pull'
 alias gplr='git pull --rebase'
 alias gpsu='git push -u origin HEAD'
+alias g-rebase-on='git config --global pull.rebase true'
+alias g-merge-on='git config --global pull.rebase false'
+# Mass repository puller
+alias gpall='find . -mindepth 1 -maxdepth 1 -type d -exec sh -c "cd \"{}\"; git pull || echo \"Failed in {}\"" \;'
+
+# --- Rebasing, Stashing & Misc ---
 alias grb='git rebase'
 alias grbi='git rebase -i'
 alias gst='git stash'
@@ -238,19 +267,118 @@ alias gcp='git cherry-pick'
 alias gtag='git tag'
 
 # =============================================================================
-# ssh
+# ssh — lab & remote hosts
 # =============================================================================
+
+# Proxmox
+alias pve='ssh -A root@192.168.70.2'
+alias prox='ssh -A root@192.168.70.2'
 
 alias ssh-copy='ssh-copy-id'
 alias sshagent='eval "$(ssh-agent -s)" && ssh-add --apple-use-keychain ~/.ssh/id_ed25519'
 
 # =============================================================================
+# authentik ldap
+# =============================================================================
+
+alias lsearch='ldapsearch -H ldap://ldap.example.cloud -D "cn=staff@example.cloud,ou=users,dc=ldap,dc=example,dc=cloud" -W -b "dc=ldap,dc=example,dc=cloud" -y ~/.pwf -Z'
+alias lgroup='ldapsearch -H ldap://ldap.example.cloud -D "cn=staff@example.cloud,ou=users,dc=ldap,dc=example,dc=cloud" -W -b "ou=groups,dc=ldap,dc=example,dc=cloud" -y ~/.pwf'
+
+# =============================================================================
+# ansible
+# =============================================================================
+
+alias ap='ansible-playbook'
+alias apc='ansible-playbook --syntax-check'
+alias apd='ansible-playbook --check --diff'
+alias apl='ansible-playbook --list-tasks'
+alias apv='ansible-playbook -vvv'
+alias apt='ansible-playbook --tags'
+alias aig='ansible-inventory --graph'
+alias ail='ansible-inventory --list'
+alias aping='ansible all -m ping'
+alias ahost='ansible-inventory --host'
+alias ave='ansible-vault edit'
+alias avv='ansible-vault view'
+alias avc='ansible-vault create'
+alias avd='ansible-vault decrypt'
+alias avee='ansible-vault encrypt'
+alias adoc='ansible-doc'
+alias aconf='ansible-config dump --only-changed'
+alias agl='ansible-galaxy list'
+alias alint='ansible-lint'
+
+# =============================================================================
+# terraform
+# =============================================================================
+
+alias tf='terraform'
+alias tfin='terraform init'
+alias tfp='terraform plan'
+alias tfa='terraform apply'
+alias tfd='terraform destroy'
+alias tfv='terraform validate'
+alias tff='terraform fmt'
+alias tfs='terraform show'
+alias tfsl='terraform state list'
+alias tfr='terraform refresh'
+alias tfg='terraform get'
+
+# =============================================================================
+# kubernetes (kubectl)
+# =============================================================================
+
+alias k='kubectl'
+alias kgp='kubectl get pods'
+alias kgs='kubectl get svc'
+alias kgn='kubectl get nodes'
+alias kgd='kubectl get deployments'
+alias kga='kubectl get all'
+alias kge='kubectl get events --sort-by=.lastTimestamp'
+alias kdp='kubectl describe pod'
+alias kdn='kubectl describe node'
+alias kdd='kubectl describe deployment'
+alias kl='kubectl logs'
+alias klt='kubectl logs --tail=10'
+alias kf='kubectl logs -f'
+alias kap='kubectl apply -f'
+alias kdel='kubectl delete -f'
+alias kexec='kubectl exec -it'
+alias kpf='kubectl port-forward'
+alias kctx='kubectl config use-context'
+alias kns='kubectl config set-context --current --namespace'
+alias kci='kubectl auth can-i'
+
+# =============================================================================
+# cht.sh — cheat.sh CLI
+# =============================================================================
+
+alias chts='cht.sh --shell'
+alias chts-py='cht.sh --shell python'
+alias chts-go='cht.sh --shell go'
+alias chts-bash='cht.sh --shell bash'
+alias chts-tf='cht.sh --shell terraform'
+alias chts-k8s='cht.sh --shell kubectl'
+alias chts-ansible='cht.sh --shell ansible'
+alias chts-docker='cht.sh --shell docker'
+alias chtr='curl -s cht.sh/:random'
+
+# functions — argument placement requires these to stay as functions
+cht()    { cht.sh "$@"; }                          # quick query
+chtq()   { cht.sh "$@\?Q"; }                       # clean code, no comments
+chtp()   { cht.sh "$@\?QT"; }                      # plain text, no highlighting
+chtm()   { curl -s "cht.sh/$1" | less -R; }        # paged output
+chtf()   { curl -s "cht.sh/~$1"; }                 # keyword search across all sheets
+chtl()   { curl -s "cht.sh/$1/:list" | less; }     # list all topics for a tool/lang
+chterr() { cht.sh "$(fc -ln -1)"; }                # explain last command
+
+# =============================================================================
 # weather (wttr.in)
 # =============================================================================
 
-alias weather='curl -4 "wttr.in/Las+Vegas?m&format=3"'
-alias wz='curl -4 "wttr.in/Las+Vegas?m"'
-alias wzsf='curl -4 "wttr.in/San+Francisco?m"'
+alias weather='curl -4 "wttr.in/Las+Vegas?&format=3"'
+alias wz='curl -4 "wttr.in/Las+Vegas?"'
+alias wzsf='curl -4 "wttr.in/San+Francisco?"'
 
 # =============================================================================
 # misc / utilities
@@ -266,7 +394,6 @@ alias genuuid='uuidgen | tr "[:upper:]" "[:lower:]"'
 alias pingg='ping 8.8.8.8'
 alias dnscheck='dig +short'
 alias dnsall='dig +noall +answer'
-alias flushdns='sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder'
 alias countfiles='find . -type f | wc -l'
 alias bigfiles='find . -type f -size +100M -exec ls -lh {} \;'
 alias wget='wget -c'
@@ -278,3 +405,6 @@ alias curl='curl -L'
 
 alias mud='telnet strangemud.net 9332'
 alias dmine='telnet bbs.dmine.net'
+alias navitui='source ~/.venvs/navitui/bin/activate && python3 ~/tui/navitui.py'
+
+
